@@ -1,8 +1,8 @@
-const os = require("os");
-const fs = require("fs");
-const { resolve, basename } = require("path");
-const { v4: uuid } = require("uuid");
-const hbjs = require("handbrake-js");
+const os = require('os');
+const fs = require('fs');
+const { resolve, basename } = require('path');
+const { v4: uuid } = require('uuid');
+const hbjs = require('handbrake-js');
 
 class VideoConverter {
   getInputFilePath() {
@@ -12,21 +12,21 @@ class VideoConverter {
   getOutputFilePath() {
     const today = new Date().toISOString().substr(0, 10);
 
-    return resolve(process.cwd(), "storage", `${today}-${uuid()}.mp4`);
+    return resolve(process.cwd(), 'storage', `${today}-${uuid()}.mp4`);
   }
 
-  getFileExt(contentType = "") {
+  getFileExt(contentType = '') {
     const dict = {
-      "video/mp4": "mp4",
-      "video/quicktime": "mov",
-      "video/x-msvideo": "avi",
+      'video/mp4': 'mp4',
+      'video/quicktime': 'mov',
+      'video/x-msvideo': 'avi',
     };
 
     return dict[contentType];
   }
 
   async convert(req) {
-    const ext = this.getFileExt(req.headers["content-type"]);
+    const ext = this.getFileExt(req.headers['content-type']);
 
     const input = `${this.getInputFilePath()}.${ext}`;
 
