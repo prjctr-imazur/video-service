@@ -1,5 +1,6 @@
 const RequestValidator = require("../services/RequestValidator");
 const VideoConverter = require("../services/VideoConverter");
+const RequestValidatorError = require("../errors/RequestValidatorError");
 
 class AddVideoController {
   constructor() {
@@ -7,14 +8,14 @@ class AddVideoController {
     this.videoConverter = new VideoConverter();
   }
 
-  before(req, res) {
-    this.requestValidator.validate(req, res);
-  }
-
   async handle(req, res) {
-    this.requestValidator.validate(req, res);
+    const { error } = this.requestValidator.validate(req);
 
-    this.videoConverter.convert(req, res);
+    if (error) {
+      throw new RequestValidatorError(error);
+    }
+
+    return this.videoConverter.convert(req, res);
   }
 }
 

@@ -25,7 +25,7 @@ class VideoConverter {
     return dict[contentType];
   }
 
-  convert(req, res) {
+  async convert(req) {
     const ext = this.getFileExt(req.headers["content-type"]);
 
     const input = `${this.getInputFilePath()}.${ext}`;
@@ -34,22 +34,15 @@ class VideoConverter {
 
     req.pipe(fs.createWriteStream(input));
 
-    hbjs
-      .run({ input, output })
-      .then(() => {
-        res.statusCode = 200;
-        res.end(basename(output));
-      })
-      .catch((err) => {
-        console.log("err", err);
-        res.statusCode = 500;
-        res.end("Error");
-      })
-      .finally(() => {
-        fs.unlink(input, (err) => {
-          if (err) console.log(err);
-        });
+    try {
+      await hbjs.run({ input, output });
+
+      return basename(output);
+    } finally {
+      fs.unlink(input, (err) => {
+        if (err) console.log(err);
       });
+    }
   }
 }
 
