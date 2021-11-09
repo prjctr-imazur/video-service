@@ -10,16 +10,24 @@ const port = 3000;
 
 const router = createRouter({ hostname, port });
 
-router.get("/", (req, res) => {
-  return new AllVideosController().handle(req, res);
+router.get("/", async (_, res) => {
+  try {
+    const controller = new AllVideosController();
+    const result = await controller.handle();
+    res.statusCode = 200;
+    res.end(result);
+  } catch (err) {
+    res.statusCode = 500;
+    res.end(err.message);
+  }
 });
 
 router.post("/upload", async (req, res) => {
   try {
     const controller = new AddVideoController();
-    const fileName = await controller.handle(req, res);
-    res.statusCode = 200;
-    res.end(fileName);
+    const result = await controller.handle(req);
+    res.statusCode = 201;
+    res.end(result);
   } catch (err) {
     if (err instanceof RequestValidatorError) {
       res.statusCode = 415;

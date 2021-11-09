@@ -8,14 +8,14 @@ class AddVideoController {
     this.videoConverter = new VideoConverter();
   }
 
-  async handle(req, res) {
+  async handle(req) {
     const { error } = this.requestValidator.validate(req);
 
     if (error) {
       throw new RequestValidatorError(error);
     }
 
-    return this.videoConverter.convert(req, res);
+    return this.videoConverter.convert(req);
   }
 }
 
