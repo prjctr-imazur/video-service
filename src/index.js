@@ -1,52 +1,15 @@
-const { createServer } = require("http");
+const Koa = require('koa');
 
-const createRouter = require("./router");
-const AllVideosController = require("./controllers/AllVideosController");
-const AddVideoController = require("./controllers/AddVideoController");
-const RequestValidatorError = require("./errors/RequestValidatorError");
+const router = require('./api/router');
 
-const hostname = "127.0.0.1";
-const port = 3000;
+const config = { host: '127.0.0.1', port: 3000 };
 
-const router = createRouter({ hostname, port });
+const app = new Koa();
 
-router.get("/", async (_, res) => {
-  try {
-    const controller = new AllVideosController();
-    const result = await controller.handle();
-    res.statusCode = 200;
-    res.end(result);
-  } catch (err) {
-    res.statusCode = 500;
-    res.end(err.message);
-  }
-});
+app.use(router.routes());
 
-router.post("/upload", async (req, res) => {
-  try {
-    const controller = new AddVideoController();
-    const result = await controller.handle(req);
-    res.statusCode = 201;
-    res.end(result);
-  } catch (err) {
-    if (err instanceof RequestValidatorError) {
-      res.statusCode = 415;
-      res.end(err.message);
-    } else {
-      res.statusCode = 500;
-      res.end(err.message);
-    }
-  }
-});
+app.use(router.allowedMethods());
 
-router.fallback((req, res) => {
-  res.statusCode = 404;
-
-  res.end("Not found");
-});
-
-const server = createServer(router.handle);
-
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+app.listen(config.port, () => {
+  console.log(`App is listening on http://${config.host}:${config.port}`);
 });
