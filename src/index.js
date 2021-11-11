@@ -1,10 +1,13 @@
 const Koa = require('koa');
 
-const router = require('./api/router');
+const router = require('./api/routes');
+const errorHandler = require('./api/middleware/errorHandler');
 
 const config = { host: '127.0.0.1', port: 3000 };
 
 const app = new Koa();
+
+app.use(errorHandler);
 
 app.use(router.routes());
 
