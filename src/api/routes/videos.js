@@ -1,5 +1,5 @@
 const { validate } = require('../middleware/validation');
-const respond = require('../helpers/respond');
+const { respond } = require('../helpers/respond');
 
 const VideosValidator = require('../validators/VideosValidator');
 const VideosController = require('../controllers/VideosController');
@@ -19,39 +19,31 @@ function register(router) {
 
     const data = await controller.handle(ctx);
 
-    respond.success(ctx, data);
+    respond(ctx, data);
   });
 
-  router.post(
-    '/videos',
-    validate(new CreateVideoValidator()),
-    async (ctx) => {
-      const { userId } = ctx.request.query;
+  router.post('/videos', validate(new CreateVideoValidator()), async (ctx) => {
+    const { userId } = ctx.request.query;
 
-      const controller = new CreateVideoController();
+    const controller = new CreateVideoController();
 
-      const data = await controller.handle({
-        stream: ctx.req,
-        userId,
-      });
+    const data = await controller.handle({
+      stream: ctx.req,
+      userId,
+    });
 
-      respond.success(ctx, data);
-    }
-  );
+    respond(ctx, data);
+  });
 
-  router.get(
-    '/videos/:id',
-    validate(new ShowVideoValidator()),
-    async (ctx) => {
-      const { id } = ctx.request.params;
+  router.get('/videos/:id', validate(new ShowVideoValidator()), async (ctx) => {
+    const { id } = ctx.request.params;
 
-      const controller = new ShowVideoController();
+    const controller = new ShowVideoController();
 
-      const data = await controller.handle({ id });
+    const data = await controller.handle({ id });
 
-      return data ? respond.success(ctx, data) : respond.notfound(ctx);
-    }
-  );
+    return data ? respond(ctx, data) : respond(ctx, null, 404);
+  });
 
   router.delete(
     '/videos/:id',
@@ -63,7 +55,7 @@ function register(router) {
 
       const data = await controller.handle({ id });
 
-      return data ? respond.success(ctx, id) : respond.notfound(ctx);
+      return data ? respond(ctx, id) : respond(ctx, null, 404);
     }
   );
 }
