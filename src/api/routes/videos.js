@@ -13,9 +13,17 @@ const DeleteVideoController = require('../controllers/DeleteVideoController');
 const ShowVideoValidator = require('../validators/ShowVideoValidator');
 const ShowVideoController = require('../controllers/ShowVideoController');
 
+const ForeverCacheDecorator = require('../../decorators/ForeverCacheDecorator');
+const RemoveCacheDecorator = require('../../decorators/RemoveCacheDecorator');
+
 function register(router) {
   router.get('/videos', validate(new VideosValidator()), async (ctx) => {
-    const controller = new VideosController();
+    const { userId } = ctx.request.query;
+
+    const controller = new ForeverCacheDecorator(
+      new VideosController(),
+      `users.${userId}.videos`
+    );
 
     const data = await controller.handle(ctx);
 
@@ -25,7 +33,10 @@ function register(router) {
   router.post('/videos', validate(new CreateVideoValidator()), async (ctx) => {
     const { userId } = ctx.request.query;
 
-    const controller = new CreateVideoController();
+    const controller = new RemoveCacheDecorator(
+      new CreateVideoController(),
+      `users.${userId}.videos`
+    );
 
     const data = await controller.handle({
       stream: ctx.req,
@@ -38,7 +49,10 @@ function register(router) {
   router.get('/videos/:id', validate(new ShowVideoValidator()), async (ctx) => {
     const { id } = ctx.request.params;
 
-    const controller = new ShowVideoController();
+    const controller = new ForeverCacheDecorator(
+      new ShowVideoController(),
+      `videos.${id}`
+    );
 
     const data = await controller.handle({ id });
 
@@ -51,7 +65,10 @@ function register(router) {
     async (ctx) => {
       const { id } = ctx.request.params;
 
-      const controller = new DeleteVideoController();
+      const controller = new RemoveCacheDecorator(
+        new DeleteVideoController(),
+        `videos.${id}`
+      );
 
       const data = await controller.handle({ id });
 
