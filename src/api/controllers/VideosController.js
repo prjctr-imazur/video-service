@@ -1,13 +1,10 @@
-const { readdir } = require('fs/promises');
-const { resolve } = require('path');
+const { Video } = require('../../database/models');
 
 class VideosController {
-  async handle() {
-    const storage = resolve(process.cwd(), 'storage');
+  async handle(ctx) {
+    const { userId } = ctx.request.query;
 
-    const files = await readdir(storage);
-
-    return files.filter((file) => file.endsWith('.mp4')).join('\n');
+    return Video.findAll({ where: { userId } });
   }
 }
 

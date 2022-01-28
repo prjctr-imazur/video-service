@@ -6,16 +6,23 @@
   "scripts": {
     "start": "nodemon src/index.js",
     "lint": "eslint src/**",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate": "npx sequelize-cli db:migrate",
+    "migrate:undo": "npx sequelize-cli db:migrate:undo",
+    "migrate:refresh": "npm run migrate:undo && npm run migrate"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv-defaults": "3.0.0",
     "handbrake-js": "6.0.0",
+    "joi": "17.5.0",
     "koa": "2.13.4",
     "koa-bodyparser": "4.3.0",
     "koa-router": "10.1.1",
+    "lodash": "^4.17.21",
+    "pg": "8.7.1",
+    "sequelize": "6.13.0",
     "uuid": "8.3.2",
     "winston": "3.3.3"
   },
@@ -26,6 +33,7 @@
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "4.0.0",
     "nodemon": "2.0.14",
-    "prettier": "2.4.1"
+    "prettier": "2.4.1",
+    "sequelize-cli": "6.3.0"
   }
 }
